@@ -1,4 +1,4 @@
-pip install joblib
+!pip install joblib
 
 import streamlit as st
 from PIL import Image
