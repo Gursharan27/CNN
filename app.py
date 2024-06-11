@@ -1,10 +1,12 @@
+pip install joblib
+
 import streamlit as st
 from PIL import Image
 import numpy as np
 import joblib
 
 # Load your trained model
-model = joblib.load('.pkl')
+model = joblib.load('Covid19PREDICTION_CNN_model.pkl')
 
 # Define the UI
 st.title('COVID-19 Prediction App')
