@@ -1,3 +1,13 @@
+import subprocess
+
+# Define the package name to install
+package_name = 'joblib'
+
+# Use subprocess to execute pip command
+subprocess.call(['pip', 'install', package_name])
+
+
+
 import streamlit as st
 from PIL import Image
 import numpy as np
