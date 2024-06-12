@@ -1,48 +1,39 @@
+
+
+
 import streamlit as st
+from PIL import Image
 import numpy as np
-from keras.models import load_model
-from keras.preprocessing import image
+import joblib
 
-# Load the Keras model
-model = load_model('Covid_CNN_Model.keras')
+# Load your trained model
+model = joblib.load('Covid19PREDICTION_CNN_model.pkl')
 
-# Function to preprocess input image
-def preprocess_input_image(image_data):
-    # Resize image to match model input shape
-    img = image.load_img(image_data, target_size=(224, 224))
-    # Convert image to array and preprocess
-    img_array = image.img_to_array(img)
-    img_array = np.expand_dims(img_array, axis=0)
-    processed_img_array = img_array / 255.  # Normalize pixel values
-    return processed_img_array
+# Define the UI
+st.title('COVID-19 Prediction App')
+st.write('Fill in patient information and upload lung X-ray and masked images:')
 
-# Function to make predictions
-def make_prediction(input_image):
-    preprocessed_image = preprocess_input_image(input_image)
-    prediction = model.predict(preprocessed_image)
-    return prediction
+# Example input fields
+patient_name = st.text_input('Patient Name')
+age = st.number_input('Age', min_value=0, max_value=150, value=30)
 
-# Streamlit app
-def main():
-    st.title('Image Classification with Keras Model')
+# Upload images
+xray_image = st.file_uploader('Upload Lung X-ray Image', type=['jpg', 'jpeg', 'png'])
+masked_image = st.file_uploader('Upload Masked Image', type=['jpg', 'jpeg', 'png'])
 
-    # File uploader for image
-    uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+if xray_image and masked_image:
+    # Process uploaded images
+    xray_img = Image.open(xray_image)
+    masked_img = Image.open(masked_image)
 
-    # Make prediction if image is uploaded
-    if uploaded_file is not None:
-        # Display the image
-        st.image(uploaded_file, caption='Uploaded Image.', use_column_width=True)
+    # Make predictions
+    # You'll need to preprocess the images (e.g., resize, normalize) before feeding them into the model
+    prediction = model.predict([patient_name, age, xray_img, masked_img])
 
-        # Make prediction on the uploaded image
-        if st.button('Predict'):
-            prediction = make_prediction(uploaded_file)
-            st.write('Prediction:', prediction)
-
-if __name__ == '__main__':
-    main()
-
-
+    # Display results
+    st.write('Prediction:', prediction)
+    st.image(xray_img, caption='Lung X-ray Image', use_column_width=True)
+    st.image(masked_img, caption='Masked Image', use_column_width=True)
 
 
 
